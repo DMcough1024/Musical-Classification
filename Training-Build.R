@@ -2,21 +2,40 @@ library(tidyverse)
 library(cluster)
 library(factoextra)
 library(lubridate)
+library(here)
+library(httr)
+library(jsonlite)
 
-setwd("C:/Users/Daniel Myerscough/Documents/Music-Project/Playlists")
+# Define Functions
+
+rvw_playlist <- function(df, summ) {
+  # Summarize the current playlist when through
+  summary(df)
+  return(summ)
+}
+
+# Set initial variables
+
+getwd()
+setwd(here("Playlists"))
 playlists <- list.files()
 songs <- data.frame()
+playlist_summary <- data.frame()
+spotify_api_token = "BQBGGGRrw1eEu9n5oyRKTWbN5YhF3OCMl9EdBH3s62A22dLHHbZeEzXcmYnz45UbnJdevT5VtIG3JrWOMwl9VRGqkTh_WrqGiaADK7xf52YXeInr6"
+spotify_url = "https://api.sptoify.com/"
 
 for (playlist in playlists) { 
-  df <- read.csv(playlist)
+  df <- read.csv(here("playlists", playlist))
   df$old_list <- strsplit(playlist, ".", fixed = TRUE)[[1]][1]
+  playlist_summary <- rvw_playlist(df, playlist_summary)
   songs <- rbind(songs, df)
 }
+rm(playlist)
 
 songs$tone <- sapply(strsplit(songs$Key, " ", fixed = TRUE), `[`, 2)
 songs$key <- sapply(strsplit(songs$Key, " ", fixed = TRUE), `[`, 1)
 songs$length <- as.integer(sapply(strsplit(songs$Duration, ":", fixed = TRUE), `[`, 1)) * 60 + as.integer(sapply(strsplit(songs$Duration, ":", fixed = TRUE), `[`, 2))
-songs$album_age <- # Get age of album
+# songs$album_age <- # Get age of album
 songs <- subset(songs, select = -c(old_list, Key, X., Added.At, Album, Spotify.Track.Id, Explicit, ISRC, Duration))
 
 songs <- songs %>% 
@@ -30,8 +49,9 @@ songs <- songs %>%
     length = as.integer(length)
   )
 
-setwd("C:/Users/Daniel Myerscough/Documents/Music-Project")
-write.csv(songs_feed, "songs-combined.csv")
+setwd(here())
+write.csv(songs, here("songs-combined.csv"))
+
 
 gower <- daisy(songs, metric = "gower")
 
