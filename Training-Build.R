@@ -21,8 +21,6 @@ setwd(here("Playlists"))
 playlists <- list.files()
 songs <- data.frame()
 playlist_summary <- data.frame()
-spotify_api_token = "BQBGGGRrw1eEu9n5oyRKTWbN5YhF3OCMl9EdBH3s62A22dLHHbZeEzXcmYnz45UbnJdevT5VtIG3JrWOMwl9VRGqkTh_WrqGiaADK7xf52YXeInr6"
-spotify_url = "https://api.sptoify.com/"
 
 for (playlist in playlists) { 
   df <- read.csv(here("playlists", playlist))
